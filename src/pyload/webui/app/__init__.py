@@ -20,7 +20,7 @@ from .extensions import EXTENSIONS, THEMES
 from .filters import TEMPLATE_FILTERS
 from .globals import TEMPLATE_GLOBALS
 from .handlers import ERROR_HANDLERS
-from .helpers import JSONEncoder
+from .helpers import JSONProvider
 from .processors import CONTEXT_PROCESSORS
 
 
@@ -71,8 +71,8 @@ class App:
             return response
 
     @classmethod
-    def _configure_json_encoding(cls, app):
-        app.json_encoder = JSONEncoder
+    def _configure_json_provider(cls, app):
+        app.json = JSONProvider(app)
 
     @classmethod
     def _configure_templating(cls, app):
@@ -129,7 +129,7 @@ class App:
         cls._configure_api(app, pycore)
         cls._configure_config(app, develop)
         cls._configure_templating(app)
-        cls._configure_json_encoding(app)
+        cls._configure_json_provider(app)
         cls._configure_session(app)
         cls._configure_blueprints(app, path_prefix)
         cls._configure_extensions(app)
