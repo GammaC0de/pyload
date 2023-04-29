@@ -9,20 +9,26 @@ import flask_themes2
 from pyload.core.api import Perms, Role, has_permission
 
 
-class JSONProvider(flask.json.provider.JSONProvider):
-    class JSONEncoder(json.JSONEncoder):
-        def default(self, obj):
-            try:
-                return dict(obj)
-            except TypeError:
-                pass
-            return super().default(obj)
+class JSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        try:
+            return dict(obj)
+        except TypeError:
+            pass
+        return super().default(obj)
 
-    def dumps(self, obj, **kwargs):
-        return json.dumps(obj, **kwargs, cls=self.JSONEncoder)
 
-    def loads(self, s, **kwargs):
-        return json.loads(s, **kwargs)
+try:
+    JSONProviderBase = flask.json.provider.JSONProvider
+except AttributeError:
+    pass
+else:
+    class JSONProvider(JSONProviderBase):
+        def dumps(self, obj, **kwargs):
+            return json.dumps(obj, **kwargs, cls=self.JSONEncoder)
+
+        def loads(self, s, **kwargs):
+            return json.loads(s, **kwargs)
 
 
 #: Checks if location belongs to same host address
