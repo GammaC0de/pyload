@@ -3,7 +3,9 @@
 import threading
 from functools import wraps
 
-from ..helpers import Periodical, is_sequence
+from pyload.core.utils.check import is_sequence
+
+from ..helpers import Periodical
 from .plugin import BasePlugin
 
 
@@ -66,11 +68,6 @@ class BaseAddon(BasePlugin):
         Checks if addon is activated.
         """
         return self.config.get("enabled")
-
-    # TODO: Remove in 0.6.x
-    def _log(self, level, plugintype, pluginname, args, kwargs):
-        plugintype = "addon" if plugintype == "addon" else plugintype
-        return super()._log(level, plugintype, pluginname, args, kwargs)
 
     # TODO: Remove in 0.6.x
     def _init_events(self):

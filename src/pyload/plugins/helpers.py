@@ -2,6 +2,7 @@
 
 # TODO: Move to utils directory in 0.6.x
 
+import functools
 import hashlib
 import itertools
 import json
@@ -15,7 +16,6 @@ import time
 import traceback
 import zlib
 from base64 import b85decode, b85encode
-from collections.abc import Sequence
 from datetime import timedelta
 
 from ..core.utils.convert import to_bytes, to_str
@@ -229,24 +229,6 @@ def fsbsize(path):
 
     else:
         return os.statvfs(path).f_frsize
-
-
-def has_method(obj, name):
-    """
-    Check if function 'name' was defined in obj.
-    """
-    return callable(getattr(obj, name, None))
-
-
-def isiterable(obj):
-    """
-    Check if object is iterable (string excluded)
-    """
-    return hasattr(obj, "__iter__")
-
-
-def is_sequence(obj):
-    return isinstance(obj, Sequence) and not isinstance(obj, (str, bytes, bytearray))
 
 
 def get_console_encoding(enc):
@@ -674,3 +656,22 @@ def move_tree(src, dst, overwrite=False):
             os.rmdir(src_dir)
         except OSError:
             pass
+
+
+def ttl_cache(maxsize=128, typed=False, ttl=-1):
+    """Like functools.lru_cache decorator with time to live feature"""
+    if ttl <= 0:
+        ttl = 65536
+
+    start_time = time.time()
+
+    def wrapper(func):
+        @functools.lru_cache(maxsize, typed)
+        def ttl_func(ttl_hash,  *args, **kwargs):
+            return func(*args, **kwargs)
+
+        def wrapped(*args, **kwargs):
+            ttl_hash = int((time.time() - start_time) / ttl)
+            return ttl_func(ttl_hash, *args, **kwargs)
+        return functools.update_wrapper(wrapped, func)
+    return wrapper
