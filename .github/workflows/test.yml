@@ -19,7 +19,7 @@ jobs:
   pre-test:
     name: Pre-Test ${{ matrix.toxenv }}
 
-    runs-on: ${{ matrix.platform.os }}
+    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
@@ -68,17 +68,16 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
-        platform:
-          os: [ubuntu-20.04, macos-latest, windows-latest]
-          architecture: [x64]
-          include:
-            - python-version: pypy-3.6
-              os: ubuntu-20.04
-              toxenv: pypy
+        os: [ubuntu-20.04, macos-latest, windows-latest]
+        architecture: [x64]
+        include:
+          - python-version: pypy-3.6
+            os: ubuntu-20.04
+            toxenv: pypy
 
-            - python-version: pypy-3.7
-              os: ubuntu-20.04
-              toxenv: pypy
+          - python-version: pypy-3.7
+            os: ubuntu-20.04
+            toxenv: pypy
 
     steps:
       - name: Check out repository
@@ -91,7 +90,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          architecture: ${{ matrix.platform.architecture }}
+          architecture: ${{ matrix.architecture }}
 
       - name: Prepare cache
         if: "!startsWith(matrix.os, 'windows')"
