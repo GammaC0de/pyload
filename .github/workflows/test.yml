@@ -19,7 +19,7 @@ jobs:
   pre-test:
     name: Pre-Test ${{ matrix.toxenv }}
 
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.platform.os }}
 
     strategy:
       fail-fast: false
