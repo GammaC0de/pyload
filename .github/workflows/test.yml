@@ -90,7 +90,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          architecture: x64
+          architecture: ${{ matrix.platform.architecture }}
 
       - name: Prepare cache
         if: "!startsWith(matrix.os, 'windows')"
