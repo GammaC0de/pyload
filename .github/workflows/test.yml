@@ -82,9 +82,12 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
+
       - name: Install binary packages
         if: startsWith(matrix.os, 'ubuntu')
         run: sudo apt-get update && sudo apt-get -y --no-install-recommends install libcurl4-openssl-dev
+
+      - name: Install binary packages
         if: startsWith(matrix.os, 'macos')
         run: brew install gettext && brew link gettext --force
 
