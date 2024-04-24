@@ -58,6 +58,7 @@ def is_module(name):
     """Check if exists a module with given name."""
     return importlib.util.find_spec(name) is not None
 
+
 def missing(iterable, start=None, end=None):
     """List all the values between 'start' and 'stop' that are missing from 'iterable'."""
     iter_seq = set(map(int, iterable))
