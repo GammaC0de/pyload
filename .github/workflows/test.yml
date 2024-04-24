@@ -34,7 +34,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get -y --no-install-recommends install libcurl4-openssl-dev
 
       - name: Set up Python environment
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.default_python_version }}
 
@@ -87,7 +87,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get -y --no-install-recommends install libcurl4-openssl-dev
 
       - name: Set up Python environment
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           architecture: ${{ matrix.architecture }}
