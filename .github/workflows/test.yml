@@ -85,6 +85,8 @@ jobs:
       - name: Install binary packages
         if: startsWith(matrix.os, 'ubuntu')
         run: sudo apt-get update && sudo apt-get -y --no-install-recommends install libcurl4-openssl-dev
+        if: startsWith(matrix.os, 'macos')
+        run: brew install gettext && brew link gettext --force
 
       - name: Set up Python environment
         uses: actions/setup-python@v5
