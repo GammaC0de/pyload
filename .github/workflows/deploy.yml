@@ -10,11 +10,16 @@ on:
 jobs:
   pypi:
     name: Deploy to PyPI
-    # if: github.event.workflow_run.conclusion == 'success'
+     # if: github.event.workflow_run.conclusion == 'success'
 
     runs-on: ubuntu-latest
 
     steps:
+      - name: Dump workflow run conclusion
+        env:
+          WORKFLOW_RUN_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+        run: echo "WORKFLOW_RUN_CONCLUSION $WORKFLOW_RUN_CONCLUSION"
+
       - name: Download artifacts
         uses: dawidd6/action-download-artifact@v3
         with:
