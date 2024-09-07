@@ -4,7 +4,7 @@ import os
 
 import flask
 from flask.json import jsonify
-
+from pyload import PKGDIR
 from pyload.core.api import Role
 from pyload.core.utils import format
 
@@ -271,6 +271,12 @@ def save_config():
         except Exception:
             continue
 
+        if section == 'general' and option=='storage_folder':
+            abs_path_value = os.path.join(os.path.abspath(value).lower(), "")
+            abs_PKGDIR = os.path.join(os.path.abspath(PKGDIR).lower(), "")
+            if abs_path_value.startswith(abs_PKGDIR):
+                continue
+
         api.set_config_value(section, option, value, category)
 
     return jsonify(True)
@@ -285,10 +291,14 @@ def add_account():
 
     login = flask.request.form["account_login"]
     password = flask.request.form["account_password"]
-    type = flask.request.form["account_type"]
+    account_type = flask.request.form["account_type"]
 
-    api.update_account(type, login, password)
-    return jsonify(True)
+    if login:
+        api.update_account(account_type, login, password)
+        return jsonify(True)
+
+    else:
+        return jsonify(False)
 
 
 @bp.route("/json/update_accounts", methods=["POST"], endpoint="update_accounts")
@@ -296,7 +306,7 @@ def add_account():
 @login_required("ACCOUNTS")
 # @fresh_login_required
 def update_accounts():
-    deleted = []  #: dont update deleted accounts or they will be created again
+    deleted = []  #: don't update deleted accounts, or they will be created again
     updated = {}
     api = flask.current_app.config["PYLOAD_API"]
 

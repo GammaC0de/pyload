@@ -62,7 +62,7 @@ class AddonManager:
 
         self.plugins = []
         self.plugin_map = {}
-        self.methods = {}  #: dict of names and list of methods usable by rpc
+        self.rpc_methods = {}  #: dict of names and list of methods usable by rpc
 
         self.events = {}  #: contains events
 
@@ -80,10 +80,10 @@ class AddonManager:
         plugin = plugin.rpartition(".")[2]
         doc = doc.strip() if doc else ""
 
-        if plugin in self.methods:
-            self.methods[plugin][func] = doc
+        if plugin in self.rpc_methods:
+            self.rpc_methods[plugin][func] = doc
         else:
-            self.methods[plugin] = {func: doc}
+            self.rpc_methods[plugin] = {func: doc}
 
     def call_rpc(self, plugin, func, args, parse):
         if not args:
@@ -99,7 +99,7 @@ class AddonManager:
         plugins = []
 
         active = []
-        deactive = []
+        inactive = []
 
         for plugin_name in self.pyload.plugin_manager.addon_plugins:
             try:
@@ -118,7 +118,7 @@ class AddonManager:
                     if plugin.is_activated():
                         active.append(plugin_class.__name__)
                 else:
-                    deactive.append(plugin_name)
+                    inactive.append(plugin_name)
 
             except Exception:
                 self.pyload.log.warning(
@@ -131,7 +131,7 @@ class AddonManager:
             self._("Activated addons: {}").format(", ".join(sorted(active)))
         )
         self.pyload.log.info(
-            self._("Deactivate addons: {}").format(", ".join(sorted(deactive)))
+            self._("Deactivate addons: {}").format(", ".join(sorted(inactive)))
         )
 
         self.plugins = plugins
