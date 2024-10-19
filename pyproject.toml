@@ -14,3 +14,8 @@ build-backend = "setuptools.build_meta"
 [tool.black]
 line-length = 88
 target-version = ['py36']
+
+[project.optional-dependencies]
+msgspec = [
+    "msgspec>=0.18.5; implementation_name == \"cpython\"",
+]

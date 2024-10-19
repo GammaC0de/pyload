@@ -60,7 +60,7 @@ jobs:
         run: tox -e ${{ matrix.toxenv }} --workdir ${{ env.toxworkdir }}
 
   test:
-    name: Test with Python ${{ matrix.python-version }} on ${{ matrix.os }} 🧪
+    name: Test ${{ matrix.python-version }} on ${{ matrix.os }} 🧪
     needs:
       - lint
 
