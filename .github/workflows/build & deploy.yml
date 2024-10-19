@@ -1,0 +1,75 @@
+name: Build & Deploy
+
+on:
+  workflow_run:
+    workflows: [Lint & Test]
+    branches: [main]
+    # tags: v[\d.]+
+    types: [completed]
+  workflow_dispatch:
+
+env:
+  PYCURL_SSL_LIBRARY: openssl
+  runner_python_version: "3.x"
+  PYLOAD_BUILD: ${{ github.run_number }}
+  DISTUTILS_DEBUG: 1
+
+jobs:
+
+  # https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
+  build:
+    name: Build distribution 📦
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.runner_python_version }}
+
+      - name: Install pypa/build
+        run: python3 -m pip install build Babel Jinja2 --user
+
+      - name: Build locale
+        run: python3 setup.py -vvvv build_locale
+
+      - name: Build a binary wheel and a source tarball
+        run: python3 -m build
+
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+  publish-to-pypi:
+    name: Publish to PyPI 🚀
+    # only publish to PyPI on final tag pushes
+#    if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref, 'rc')
+    needs:
+      - build
+
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pyload-ng
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
+
+
