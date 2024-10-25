@@ -11,7 +11,6 @@ on:
 env:
   PYCURL_SSL_LIBRARY: openssl
   runner_python_version: "3.x"
-  PYLOAD_BUILD: ${{ github.run_number }}
   DISTUTILS_DEBUG: 1
 
 jobs:
@@ -24,7 +23,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Set build number
+        run: |
+          $build = 85 + ${{ github.run_number }}
+          echo "PYLOAD_BUILD=$build" >> $GITHUB_ENV
+
+      - name: Check out repository
+        uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
