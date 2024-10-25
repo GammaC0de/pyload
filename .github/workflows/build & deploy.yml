@@ -25,7 +25,7 @@ jobs:
     steps:
       - name: Set build number
         run: |
-          $build = 85 + ${{ github.run_number }}
+          $build = (85 + ${{ github.run_number }})
           echo "PYLOAD_BUILD=$build" >> $GITHUB_ENV
 
       - name: Check out repository
